@@ -28,7 +28,7 @@ cat >>/tmp/\$INSTANCE.plist <<EOF
 	<key>ProgramArguments</key>
 		<array>
 			<string>/usr/local/bin/node</string>
-			<string>/Groups/dvlp/nodejs/instances/\$INSTANCE/bin/camera</string>
+			<string>app.js</string>
 		</array>
 	<key>KeepAlive</key>
 		<dict>
