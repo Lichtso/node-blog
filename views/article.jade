@@ -10,20 +10,15 @@
       h1 #{article.name} 
         small.time
           abbr.timeago(title=article.date.toISOString()) #{article.date.toISOString()}
-        - if (article.readtime.min > 0)
-          small.read , #{article.readtime.min} min #{article.readtime.sec} sec to read…
-        - else 
-          small.read , #{article.readtime.sec} sec to read…
+          small.read , #{article.words} words
     .row#articlerow
       a(name="article-content", id="article-content")    
       #preview.span12!= article.html
         - if (!article.hidden)
           #disqus_thread
           script(type="text/javascript")
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = '#{meta.disqus}'; // required: replace example with your forum shortname
+            var disqus_shortname = '#{meta.name}';
 
-            /* * * DON'T EDIT BELOW THIS LINE * * */
             (function() {
                 var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
                 dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';

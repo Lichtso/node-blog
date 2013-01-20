@@ -18,7 +18,7 @@ mdb.setDefault('url', 'http://' + config.host + (config.port == '80' ? '' : ':' 
 mdb.setMeta('site', config.host); 
 mdb.setMeta('url', 'http://' + config.host);
 mdb.setMeta('author', config.author);
-mdb.setMeta('disqus', config.disqus);
+mdb.setMeta('name', config.name);
 
 /**
  * Add admin login
