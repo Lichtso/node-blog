@@ -6,7 +6,7 @@ function loadDrafts() {
     $('#draftsmodal .modal-body').removeClass('loading-body');
     data = JSON.parse(data);
     $('#draftsmodal .modal-body').html('<p>You have stored <strong>' + data.length + ' unpublished drafts</strong>. When logged in you can preview unpublished posts and use the built-in composer for editing, please choose an article:</p>');
-    $('#draftsmodal .modal-body').append($('<table class="zebra-striped"><tbody></tbody></table><p>For permanently removing articles you have to manually delete the markdown file on your server and either restart node-blog or <a href="">refresh your data…</a></p>'));
+    $('#draftsmodal .modal-body').append($('<table class="zebra-striped"><tbody></tbody></table>'));
     for (var i = 0; i < data.length; i++) {
       $('#draftsmodal tbody').append($('<tr><td class="span1"><code>' + data[i].id + '</code></td><td><a href="' + data[i].url + '">' + data[i].name + '</a></td></tr>'));
     }
@@ -53,12 +53,53 @@ var editMode = function() {
   return true;
 };
 
+/** Try to authenticate **/
+var authenticate = function(e) {
+  e.preventDefault();
+  $('#loginstatus').css('display', 'block').removeClass('failed').removeClass('done').addClass('loader');
+  $.post("/api/auth", { name: $('#uname').val(), password: $('#pword').val() }, function(data) {
+    if (data == '1') {
+      $('#loginstatus').html("Login done, Please wait!");
+      $('#loginstatus').removeClass('loader').removeClass('failed').addClass('done');
+      window.setTimeout('location.reload()', 250); }
+    else {
+      $('#loginstatus').html("Login failed!");
+      $('#loginstatus').removeClass('loader').removeClass('done').addClass('failed'); }
+  });
+};
+
+/** Try to create a new compose **/
+var composecreate = function(e) {
+  e.preventDefault();
+  $('#composestatus').css('display', 'block').removeClass('failed').removeClass('done').addClass('loader');
+  $.post("/api/new", { pid: $('#npid').val(), name: $('#ntitle').val() }, function(data) {
+    if (data == '0') {
+      $('#composestatus').html("Failed to create article!");
+      $('#composestatus').removeClass('loader').removeClass('done').addClass('failed'); }
+    else {
+      $('#composestatus').html("Article created, Please wait!");
+      $('#composestatus').removeClass('loader').removeClass('failed').addClass('done');
+      window.setTimeout('location.href = "/' + data + '.html";', 500); }
+  });
+};
+
 $(document).ready(function() { 
   $("abbr.timeago").timeago();
   
   /** Add Event to Edit Button **/
-  if ($('#editMode').length > 0) {
-    $('#editMode').click(function(e) { e.preventDefault(); editMode(); }); }
+  if ($('#editMode').length > 0)
+    $('#editMode').click(function(e) { e.preventDefault(); editMode(); });
+
+  /** Add Event to Remove Button **/
+  if ($('#askRemove').length > 0) {
+    $('#askRemove').click(function(e) { e.preventDefault(); $('#removePrompt').modal('show'); });
+    $('#cancelRemove').click(function(e) { e.preventDefault(); $('#removePrompt').modal('hide'); });
+    $('#doRemove').click(function(e) {
+      e.preventDefault();
+      $('#removePrompt').modal('hide');
+      $.post(location.href, { remove: true }, function(data) { location.href = '/'; });
+    });
+  }
 
   /** Add Events to Administration Menu Items **/  
   if ($('#buttoncompose, #buttondrafts, #login').length > 0) {
@@ -68,32 +109,11 @@ $(document).ready(function() {
     $('#logout').click(function(e) { e.preventDefault(); $.post("/api/logout", { }, function(data) { location.reload(); }); } );
     
     /** Create Article Handling **/
-    $('#composecreate').click(function(e) {
-      e.preventDefault();      
-      $('#composestatus').css('display', 'block').removeClass('failed').removeClass('done').addClass('loader');
-      $.post("/api/new", { pid: $('#npid').val(), name: $('#ntitle').val() }, function(data) {
-        if (data == '0') {
-          $('#composestatus').html("Failed to create article!");
-          $('#composestatus').removeClass('loader').removeClass('done').addClass('failed'); }
-        else {
-          $('#composestatus').html("Article created, Please wait!");
-          $('#composestatus').removeClass('loader').removeClass('failed').addClass('done');
-          window.setTimeout('location.href = "/' + data + '.html";', 500); }
-      });
-    });
+    $('#composecreate').click(composecreate);
+    $('#composecreateForm').submit(composecreate);
     
     /** Authentication Handling **/
-    $('#authenticate').click(function(e) {
-      e.preventDefault();
-      $('#loginstatus').css('display', 'block').removeClass('failed').removeClass('done').addClass('loader');
-      $.post("/api/auth", { name: $('#uname').val(), password: $('#pword').val() }, function(data) {
-        if (data == '1') {
-          $('#loginstatus').html("Login done, Please wait!");
-          $('#loginstatus').removeClass('loader').removeClass('failed').addClass('done');
-          window.setTimeout('location.reload()', 500); }
-        else {
-          $('#loginstatus').html("Login failed!");
-          $('#loginstatus').removeClass('loader').removeClass('done').addClass('failed'); }
-      });
-    }); }
+    $('#authenticate').click(authenticate);
+    $('#authenticateForm').submit(authenticate);
+  }
 });
