@@ -21,9 +21,10 @@ mdb.setMeta('author', config.author);
 mdb.setMeta('name', config.name);
 
 /**
- * Add admin login
+ * Add admin logins
  **/
-mdb.addLogin(config.admin);
+for(i in config.admins)
+  mdb.addLogin(config.admins[i]);
 
 /**
  * Index markdown folder
@@ -97,6 +98,15 @@ srv.post('/api/auth', function(req, res) {
 });
 
 /**
+ * Callback for logout user session
+ **/
+srv.all('/api/logout', function(req, res) {
+  if(req.session)
+    req.session.destroy();
+  res.end('0');
+});
+
+/**
  * Display all posts available
  * @example http://semu.mp/posts
  **/
@@ -114,10 +124,17 @@ srv.all('/posts', function(req, res) {
  * @example http://semu.mp/neues-layout-und-so-3158.html
  **/
 srv.all(/([A-Za-z0-9\-]+\-([0-9]+)\.html)/, function(req, res) {
-  var updateData = req.param('data', null);
   var hasSession = req.session.valid;
-  if (updateData && hasSession) {
-    mdb.updateArticle(req.params[1], updateData); }
+
+  if(hasSession) {
+    var updateData = req.param('data', null);
+    if(updateData)
+      mdb.updateArticle(req.params[1], updateData);
+    else if(req.param('remove', null)) {
+      mdb.removeArticle(req.params[1]);
+      return res.redirect('/posts');
+    }
+  }
   
   var item = mdb.getArticle([req.params[1]], hasSession);
   if (!item) {

@@ -7,6 +7,8 @@
       - if (auth)
         .github.pull-right
           a#editMode.btn(href="#") Edit
+          | 
+          a#askRemove.btn.danger(href="#") Remove
       h1 #{article.name} 
         small.time
           abbr.timeago(title=article.date.toISOString()) #{article.date.toISOString()}
@@ -45,3 +47,13 @@
                     li
                       a(href=article.sources[i].url,title=article.sources[i].name) #{article.sources[i].name}
     .row#articlemarkdown(style="display: none;")=article.md
+    #removePrompt.modal.hide.fade
+      .modal-header
+        a.close(href="#") &times;
+        h3 Really remove "#{article.name}"?
+      .modal-body
+        p This operation can not be undone.
+        p The article will be lost forever.
+      .modal-footer
+        a#doRemove.btn.danger(href="#") Remove
+        a#cancelRemove.btn(href="#") Cancel

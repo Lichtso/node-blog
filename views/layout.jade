@@ -54,6 +54,8 @@ html(lang="de",xmlns="http://www.w3.org/1999/xhtml",xmlns:og="http://ogp.me/ns#"
                           a#buttoncompose(href="#") Compose Article…
                         li
                           a#buttondrafts(href="#") Show Drafts…
+                        li
+                          a#logout(href="#") Logout
                   - else
                     li
                       a#login(href="#") Login
@@ -62,8 +64,8 @@ html(lang="de",xmlns="http://www.w3.org/1999/xhtml",xmlns:og="http://ogp.me/ns#"
       .modal-header
         a.close(href="#") &times;
         h3 Authentication Required!
-      .modal-body
-        form
+      form#authenticateForm
+        .modal-body
           fieldset
             .clearfix
               label(for="uname") Username
@@ -73,16 +75,16 @@ html(lang="de",xmlns="http://www.w3.org/1999/xhtml",xmlns:og="http://ogp.me/ns#"
               label(for="pword") Password
               .input
                 input#pword.xlarge(type="password")                
-      .modal-footer
-        input#authenticate.pull-right.btn.primary(type="submit", value="Login")
-        span.pull-right#loginstatus.loader
-          img(src="/loader.gif")
+        .modal-footer
+          input#authenticate.pull-right.btn.primary(type="submit", value="Login")
+          span.pull-right#loginstatus.loader
+            img(src="/loader.gif")
     #composemodal.modal.hide.fade
       .modal-header
         a.close(href="#") &times;
         h3 Compose Article
-      .modal-body
-        form
+      form#composecreateForm
+        .modal-body
           fieldset
             .clearfix
               label(for="npid") New ID
@@ -95,10 +97,10 @@ html(lang="de",xmlns="http://www.w3.org/1999/xhtml",xmlns:og="http://ogp.me/ns#"
                 br 
                 br
                 span.help-block New articles will be hidden per default.
-      .modal-footer
-        input#composecreate.pull-right.btn.primary(type="submit", value="Create")
-        span.pull-right#composestatus.loader
-          img(src="/loader.gif")   
+        .modal-footer
+          input#composecreate.pull-right.btn.primary(type="submit", value="Create")
+          span.pull-right#composestatus.loader
+            img(src="/loader.gif")   
     #draftsmodal.modal.hide.fade
       .modal-header
         a.close(href="#") &times;
@@ -106,8 +108,6 @@ html(lang="de",xmlns="http://www.w3.org/1999/xhtml",xmlns:og="http://ogp.me/ns#"
       .modal-body.loading-body
         p
           img(src="/loader-big.gif")
-      .modal-footer
-        input#composecreate.pull-right.btn(type="button", value="close")
     footer.footer
       .container
         p All Posts, Ideas and Information written by  

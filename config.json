@@ -1,7 +1,9 @@
 {
   "host": "localhost",
   "port": 8080,
-  "admin": {"username": "admin", "password": "***"},
+  "admins": [
+  	{"username": "admin", "password": "123"}
+  ],
   "author": "Author Name",
   "name": "Blog Name",
   "paths": {"articles": "markdown"}
