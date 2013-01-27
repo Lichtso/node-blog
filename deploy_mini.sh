@@ -1,4 +1,9 @@
-SERVER=mf-lex2.dyndns.org
+SERVER=$1
+
+if [ "$SERVER" = '' ]
+	then
+		SERVER=mf-lex2.dyndns.org
+fi
 
 ssh -A -l nodejs $SERVER <<SCRIPT
 
