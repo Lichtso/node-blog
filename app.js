@@ -181,7 +181,7 @@ srv.all('/about', function(req, res) {
  **/
 srv.all('/', function(req, res) {
 	mdb.setMeta('url', mdb.getDefault('url'));
-	mdb.setMeta('title', 'Home, node-blog');
+	mdb.setMeta('title', 'Home');
   mdb.setMeta('current', 'home');
 
   return res.render('home', mdb.jadeData({list: mdb.getArticles()}, req));
