@@ -14,7 +14,12 @@
     "node": ">= 0.4.10"
   },
   "dependencies": {
-    "kickstart": ">= 0.0.5",
-    "node-markdownblog": ">= 1.0.5"},
+	"kickstart": ">= 0.0.5",
+	"node-markdownblog": "git://github.com/Lichtso/node-markdownblog.git",
+    "express-persona"  : ">=0.0.5",
+	"connect-winston"  : ">=0.0.1",
+	"winston"			: ">=0.6.2",
+	"winston-express"	: ">=0.0.2"
+},
   "devDependencies": {}
 }

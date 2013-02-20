@@ -1,4 +1,9 @@
-SERVER=mf-lex2.dyndns.org
+SERVER=$1
+
+if [ "$SERVER" = '' ]
+	then
+		SERVER=mf-lex2.dyndns.org
+fi
 
 ssh -A -l nodejs $SERVER <<SCRIPT
 
@@ -28,7 +33,7 @@ cat >>/tmp/\$INSTANCE.plist <<EOF
 	<key>ProgramArguments</key>
 		<array>
 			<string>/usr/local/bin/node</string>
-			<string>/Groups/dvlp/nodejs/instances/\$INSTANCE/bin/camera</string>
+			<string>app.js</string>
 		</array>
 	<key>KeepAlive</key>
 		<dict>
