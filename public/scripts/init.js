@@ -30,11 +30,10 @@ var editMode = function() {
     
     $("#composepreview").click(function(e) {
       e.preventDefault();
-      var contentList = editor.getSession().getValue().split('*/');
+      var contentList = editor.getSession().getValue().split('-->');
       var header = contentList.shift();
-      var content = contentList.join('*/');
-      var text = converter.makeHtml(content);
-      $('#preview').html(text);
+      var content = contentList.join('-->');
+      $('#preview').html(content);
     });
     
     $("#articleeditor").slideDown(400, function() {
@@ -79,7 +78,7 @@ var composecreate = function(e) {
     else {
       $('#composestatus').html("Article created, Please wait!");
       $('#composestatus').removeClass('loader').removeClass('failed').addClass('done');
-      window.setTimeout('location.href = "/' + data + '.html";', 500); }
+      window.setTimeout('location.href = "/posts/' + data + '";', 500); }
   });
 };
 
