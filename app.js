@@ -120,45 +120,57 @@ srv.all('/posts', function(req, res) {
 });
 
 /**
- * Display single blog post
- * @example http://semu.mp/neues-layout-und-so-3158.html
+ * Deploy blog post resources
+ * @example http://semu.mp/resource/3158/example.png
  **/
-srv.all(/([A-Za-z0-9\-]+\-([0-9]+)\.html)/, function(req, res) {
+srv.all(/\/resources\/([0-9]+)[A-Za-z0-9\-]*\/([A-Za-z0-9\-\.]+)/, function(req, res) {
+  var item = mdb.getArticle([req.params[0]], req.session.valid);
+  if(!item || req.params[1] == 'article.html')
+    throw new NotFound;
+    
+	res.sendfile(item.directory+req.params[1]);
+});
+
+/**
+ * Display single blog post
+ * @example http://semu.mp/posts/3158-new-layout-and-stuff
+ **/
+srv.all(/\/posts\/([0-9]+)[A-Za-z0-9\-]*/, function(req, res) {
   var hasSession = req.session.valid;
 
   if(hasSession) {
     var updateData = req.param('data', null);
     if(updateData)
-      mdb.updateArticle(req.params[1], updateData);
+      mdb.updateArticle(req.params[0], updateData);
     else if(req.param('remove', null)) {
-      mdb.removeArticle(req.params[1]);
+      mdb.removeArticle(req.params[0]);
       return res.redirect('/posts');
     }
   }
   
-  var item = mdb.getArticle([req.params[1]], hasSession);
-  if (!item) {
-    throw new NotFound; }
-  if (item.url != mdb.getDefault('url') + req.url) {
-    return res.redirect(item.url, 301); }
+  var item = mdb.getArticle([req.params[0]], hasSession);
+  if(!item)
+    throw new NotFound;
+  if(item.url != mdb.getDefault('url') + req.url)
+    return res.redirect(item.url, 301);
     
-	mdb.setMeta('url', item.url);
-	mdb.setMeta('title', item.name);
-	mdb.setMeta('headline', item.name);	
-	mdb.setMeta('current', 'posts');
-	
+  mdb.setMeta('url', item.url);
+  mdb.setMeta('title', item.name);
+  mdb.setMeta('headline', item.name); 
+  mdb.setMeta('current', 'posts');
+  
   res.render('article', mdb.jadeData({article: item, auth: req.session.valid}, req));
 });
 
 /**
  * Display articles by tag
- * @example http://semu.mp/tag/node.html
+ * @example http://semu.mp/tag/node
  **/
-srv.all(/\/tag\/([A-Za-z0-9\-]+\.html)/, function(req, res) {
-	var articles = mdb.getArticlesByTag(req.params[0].replace('.html','').toLowerCase().replace(/[^a-z0-9-]/g, '-')) || [];
+srv.all(/\/tag\/([A-Za-z0-9\-]+)/, function(req, res) {
+	var articles = mdb.getArticlesByTag(req.params[0].toLowerCase().replace(/[^a-z0-9-]/g, '-')) || [];
   mdb.setMeta('url', mdb.getDefault('url') + req.url);
-  mdb.setMeta('title', 'Tag: ' + req.params[0].replace('.html',''));
-  mdb.setMeta('headline', 'Tagged with ' + req.params[0].replace('.html',''));  
+  mdb.setMeta('title', 'Tag: ' + req.params[0]);
+  mdb.setMeta('headline', 'Tagged with ' + req.params[0]);  
   mdb.setMeta('current', 'posts');
 	
   res.render('posts', mdb.jadeData({tags: mdb.getTagCloud(30, 14), list: articles}, req));

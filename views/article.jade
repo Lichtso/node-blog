@@ -37,7 +37,7 @@
               ul.tags
                 - for (var i = 0; i < article.tags.length; i++)
                   li
-                    a(href="/tag/" + article.tags[i].url + ".html",title='Alle Artikel mit Tag "' + article.tags[i].name + '"') #{article.tags[i].name}
+                    a(href="/tag/" + article.tags[i].url, title='All articles by tag "' + article.tags[i].name + '"') #{article.tags[i].name}
           - if (article.sources.length > 0)
             tr
               td.key Links:
@@ -46,7 +46,7 @@
                   - for (var i = 0; i < article.sources.length; i++)
                     li
                       a(href=article.sources[i].url,title=article.sources[i].name) #{article.sources[i].name}
-    .row#articlemarkdown(style="display: none;")=article.md
+    .row#articlemarkdown(style="display: none;")=article.content
     #removePrompt.modal.hide.fade
       .modal-header
         a.close(href="#") &times;
