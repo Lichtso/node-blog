@@ -38,7 +38,7 @@ var editMode = function() {
     
     $("#articleeditor").slideDown(400, function() {
       editor = ace.edit("edit");
-      var mdMode = require("ace/mode/markdown").Mode;
+      var mdMode = require("ace/mode/html").Mode;
       editor.getSession().setMode(new mdMode());
       editor.setTheme("ace/theme/clouds");
       editor.getSession().setUseSoftTabs(true);

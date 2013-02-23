@@ -2,8 +2,9 @@
  * Load markdownblog framework for data handling
  * Load config JSON file
  **/
-var mdb = require('node-markdownblog');
-var config = JSON.parse(require('fs').readFileSync(__dirname + '/config.json','utf8'));
+var mdb = require('node-markdownblog'),
+    fs = require('fs');
+var config = JSON.parse(fs.readFileSync(__dirname + '/config.json','utf8'));
 
 /**
  * Set default category and set default URL
@@ -123,11 +124,26 @@ srv.all('/posts', function(req, res) {
  * Deploy blog post resources
  * @example http://semu.mp/resource/3158/example.png
  **/
-srv.all(/\/resources\/([0-9]+)[A-Za-z0-9\-]*\/([A-Za-z0-9\-\.]+)/, function(req, res) {
+srv.get(/\/resources\/([0-9]+)[A-Za-z0-9\-]*\/([A-Za-z0-9\-\.]+)/, function(req, res) {
   var item = mdb.getArticle([req.params[0]], req.session.valid);
-  if(!item || req.params[1] == 'article.html')
+  var fileStat = fs.statSync(item.directory+req.params[1]);
+  if(!item || req.params[1] == 'article.html' || !fileStat.isFile())
     throw new NotFound;
-    
+
+  var contentTypes = {
+    "mp4": "video/mp4",
+    "mov": "video/mp4",
+    "m4v": "video/mp4"
+  }, contentType = contentTypes[req.params[1].substr(req.params[1].indexOf('.')+1)];
+
+  if(contentType) {
+    res.statusCode = 206;
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Range', 'bytes 0-'+(fileStat.size-1)+'/'+fileStat.size);
+    res.setHeader('Content-Length', fileStat.size);
+    res.setHeader('Accept-Ranges', 'bytes');
+  }
+  
 	res.sendfile(item.directory+req.params[1]);
 });
 
