@@ -86,16 +86,16 @@ srv.all('/api/drafts', function(req, res) {
  * Callback for authenticating user session
  **/
 srv.post('/api/auth', function(req, res) {
-  mdb.checkLogin(req.body.name, req.body.password, function(err) {
-    if (err) {
-      if (req.session) {
-      	req.isAdmin = false;
-        delete req.session; }
-      res.end('0'); }
-    else {
-      req.session.valid = true;
-      res.end('1'); }
-  });
+  if(mdb.checkLogin(req.body.name, req.body.password)) {
+    req.session.valid = true;
+      res.end('1');
+  }else{
+    if(req.session) {
+      req.isAdmin = false;
+      delete req.session;
+    }
+    res.end('0');
+  }
 });
 
 /**
