@@ -199,6 +199,7 @@ srv.all(/\/tag\/([A-Za-z0-9\-]+)/, function(req, res) {
 srv.all('/about', function(req, res) {
   mdb.setMeta('url', mdb.getDefault('url') + req.url);
 	mdb.setMeta('title', 'About');
+  mdb.setMeta('current', 'about');
 	
   res.render('about', mdb.jadeData({}, req));
 });

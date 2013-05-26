@@ -38,8 +38,8 @@ html(lang="de",xmlns="http://www.w3.org/1999/xhtml")
           .topbar(data-dropdown="dropdown")
             .topbar-inner
               .container
-                h3
-                  a(href="/") #{meta.name}
+                h3(class=(meta.current == 'about' ? 'active' : ''))
+                  a(href="/about") #{meta.name}
                 ul.nav
                   li(class=(meta.current == 'home' ? 'active' : ''))
                     a(href="/") Home

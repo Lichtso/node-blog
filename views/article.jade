@@ -17,6 +17,8 @@
       a(name="article-content", id="article-content")    
       #preview.span12!= article.html
         - if (!article.hidden)
+          br
+          br
           #disqus_thread
           script(type="text/javascript")
             var disqus_shortname = '#{meta.name}';
