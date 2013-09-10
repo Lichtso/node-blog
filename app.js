@@ -2,35 +2,35 @@
  * Load markdownblog framework for data handling
  * Load config JSON file
  **/
-var mdb = require('node-markdownblog'),
+var core = require('./core.js'),
     fs = require('fs');
 var config = JSON.parse(fs.readFileSync(__dirname + '/config.json','utf8'));
 
 /**
  * Set default category and set default URL
  **/
-mdb.setDefault('category', 'General');
-mdb.setDefault('url', 'http://' + config.host + (config.port == '80' ? '' : ':' + config.port));
+core.setDefault('category', 'General');
+core.setDefault('url', 'http://' + config.host + (config.port == '80' ? '' : ':' + config.port));
 
 /**
  * Set basic variables passed to jade template
  **/
  
-mdb.setMeta('site', config.host); 
-mdb.setMeta('url', 'http://' + config.host);
-mdb.setMeta('author', config.author);
-mdb.setMeta('name', config.name);
+core.setMeta('site', config.host); 
+core.setMeta('url', 'http://' + config.host);
+core.setMeta('author', config.author);
+core.setMeta('name', config.name);
 
 /**
  * Add admin logins
  **/
 for(i in config.admins)
-  mdb.addLogin(config.admins[i]);
+  core.addLogin(config.admins[i]);
 
 /**
  * Index markdown folder
  **/
-mdb.index(__dirname + '/' + config.paths.articles);
+core.index(__dirname + '/' + config.paths.articles);
 /**
  * Start express.js http servr with kickstart (more: http://semu.mp/node-kickstart.html)
  **/
@@ -42,11 +42,11 @@ var srv = kickstart.srv();
  **/
 srv.error(function(err, req, res, next){
   if (err instanceof NotFound) {
-    mdb.setMeta('url', mdb.getDefault('url') + req.url);
-    mdb.setMeta('title', '404 Not Found');
+    core.setMeta('url', core.getDefault('url') + req.url);
+    core.setMeta('title', '404 Not Found');
       
     res.statusCode = 404;
-    res.render('errors/404', mdb.jadeData({url: req.url}, req)); } 
+    res.render('errors/404', core.jadeData({url: req.url}, req)); } 
   else {
     next(err); }
 });
@@ -65,7 +65,7 @@ srv.all('*', function(req, res, next) {
  **/
 srv.all('/api/new', function(req, res) {
   var newName = '';
-  if(req.session && req.body.name && (newName += mdb.createNewArticle(req.body)) != null)
+  if(req.session && req.body.name && (newName += core.createNewArticle(req.body)) != null)
     return res.end(newName);
   else
     return res.end('0');
@@ -76,7 +76,7 @@ srv.all('/api/new', function(req, res) {
  **/
 srv.all('/api/drafts', function(req, res) {
   if(req.session)
-    return res.end(JSON.stringify(mdb.getDrafts()));
+    return res.end(JSON.stringify(core.getDrafts()));
   else
     return res.end('0');
 });
@@ -85,7 +85,7 @@ srv.all('/api/drafts', function(req, res) {
  * Callback for authenticating user session
  **/
 srv.post('/api/auth', function(req, res) {
-  if(mdb.checkLogin(req.body.name, req.body.password)) {
+  if(core.checkLogin(req.body.name, req.body.password)) {
     req.session.valid = true;
       res.end('1');
   }else{
@@ -111,12 +111,12 @@ srv.all('/api/logout', function(req, res) {
  * @example http://semu.mp/posts
  **/
 srv.all('/posts', function(req, res) {
-  mdb.setMeta('url', mdb.getDefault('url') + req.url);
-  mdb.setMeta('title', 'Articles');
-  mdb.setMeta('headline', 'Recent Articles');
-  mdb.setMeta('current', 'posts');  
+  core.setMeta('url', core.getDefault('url') + req.url);
+  core.setMeta('title', 'Articles');
+  core.setMeta('headline', 'Recent Articles');
+  core.setMeta('current', 'posts');  
 
-  res.render('posts', mdb.jadeData({list: mdb.getArticles(), tags: mdb.getTagCloud(30, 14)}, req));
+  res.render('posts', core.jadeData({list: core.getArticles(), tags: core.getTagCloud(30, 14)}, req));
 });
 
 /**
@@ -124,7 +124,7 @@ srv.all('/posts', function(req, res) {
  * @example http://semu.mp/resource/3158/example.png
  **/
 srv.get(/\/resources\/([0-9]+)\/([A-Za-z0-9\-\.]+)/, function(req, res) {
-  var item = mdb.getArticle([req.params[0]], req.session.valid);
+  var item = core.getArticle([req.params[0]], req.session.valid);
   var fileStat = fs.statSync(item.directory+req.params[1]);
   if(!item || req.params[1] == 'article.html' || !fileStat.isFile())
     throw new NotFound;
@@ -156,25 +156,25 @@ srv.all(/\/posts\/([0-9]+)/, function(req, res) {
   if(hasSession) {
     var updateData = req.param('data', null);
     if(updateData)
-      mdb.updateArticle(req.params[0], updateData);
+      core.updateArticle(req.params[0], updateData);
     else if(req.param('remove', null)) {
-      mdb.removeArticle(req.params[0]);
+      core.removeArticle(req.params[0]);
       return res.redirect('/posts');
     }
   }
   
-  var item = mdb.getArticle([req.params[0]], hasSession);
+  var item = core.getArticle([req.params[0]], hasSession);
   if(!item)
     throw new NotFound;
-  if(item.url != mdb.getDefault('url') + req.url)
+  if(item.url != core.getDefault('url') + req.url)
     return res.redirect(item.url, 301);
     
-  mdb.setMeta('url', item.url);
-  mdb.setMeta('title', item.name);
-  mdb.setMeta('headline', item.name); 
-  mdb.setMeta('current', 'posts');
+  core.setMeta('url', item.url);
+  core.setMeta('title', item.name);
+  core.setMeta('headline', item.name); 
+  core.setMeta('current', 'posts');
   
-  res.render('article', mdb.jadeData({article: item, auth: req.session.valid}, req));
+  res.render('article', core.jadeData({article: item, auth: req.session.valid}, req));
 });
 
 /**
@@ -182,13 +182,13 @@ srv.all(/\/posts\/([0-9]+)/, function(req, res) {
  * @example http://semu.mp/tag/node
  **/
 srv.all(/\/tag\/([A-Za-z0-9\-]+)/, function(req, res) {
-	var articles = mdb.getArticlesByTag(req.params[0]) || [];
-  mdb.setMeta('url', mdb.getDefault('url') + req.url);
-  mdb.setMeta('title', 'Tag: ' + req.params[0]);
-  mdb.setMeta('headline', 'Tagged with ' + req.params[0]);  
-  mdb.setMeta('current', 'posts');
+	var articles = core.getArticlesByTag(req.params[0]) || [];
+  core.setMeta('url', core.getDefault('url') + req.url);
+  core.setMeta('title', 'Tag: ' + req.params[0]);
+  core.setMeta('headline', 'Tagged with ' + req.params[0]);  
+  core.setMeta('current', 'posts');
 	
-  res.render('posts', mdb.jadeData({tags: mdb.getTagCloud(30, 14), list: articles}, req));
+  res.render('posts', core.jadeData({tags: core.getTagCloud(30, 14), list: articles}, req));
 });
 
 /**
@@ -196,11 +196,11 @@ srv.all(/\/tag\/([A-Za-z0-9\-]+)/, function(req, res) {
  * @example http://semu.mp/about
  */
 srv.all('/about', function(req, res) {
-  mdb.setMeta('url', mdb.getDefault('url') + req.url);
-	mdb.setMeta('title', 'About');
-  mdb.setMeta('current', 'about');
+  core.setMeta('url', core.getDefault('url') + req.url);
+	core.setMeta('title', 'About');
+  core.setMeta('current', 'about');
 	
-  res.render('about', mdb.jadeData({}, req));
+  res.render('about', core.jadeData({}, req));
 });
 
 /**
@@ -208,11 +208,11 @@ srv.all('/about', function(req, res) {
  * @example http://semu.mp/ 
  **/
 srv.all('/', function(req, res) {
-	mdb.setMeta('url', mdb.getDefault('url'));
-	mdb.setMeta('title', 'Home');
-  mdb.setMeta('current', 'home');
+	core.setMeta('url', core.getDefault('url'));
+	core.setMeta('title', 'Home');
+  core.setMeta('current', 'home');
 
-  return res.render('home', mdb.jadeData({list: mdb.getArticles()}, req));
+  return res.render('home', core.jadeData({list: core.getArticles()}, req));
 });
 
 /**
@@ -220,7 +220,7 @@ srv.all('/', function(req, res) {
  * @example http://semu.mp/feed 
  **/
 srv.all('/feed', function(req, res) {
-  return res.render('feed', mdb.jadeData({url: mdb.getDefault('url') + req.url, layout: false, list: mdb.getArticles()}, req));
+  return res.render('feed', core.jadeData({url: core.getDefault('url') + req.url, layout: false, list: core.getArticles()}, req));
 });
 
 /**
