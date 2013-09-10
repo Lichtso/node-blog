@@ -1,11 +1,3 @@
-/*
- * node-markdownblog 1.0
- * http://semu.mp/node-markdownblog.html
- *
- * (c) 2012 Sebastian Müller <c@semu.mp>
- * MIT license 
- */
-
 /**
  * Require needed modules and define variables
  **/

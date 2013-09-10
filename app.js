@@ -1,5 +1,4 @@
 /**
- * Load markdownblog framework for data handling
  * Load config JSON file
  **/
 var core = require('./core.js'),
@@ -28,7 +27,7 @@ for(i in config.admins)
   core.addLogin(config.admins[i]);
 
 /**
- * Index markdown folder
+ * Index articles folder
  **/
 core.index(__dirname + '/' + config.paths.articles);
 /**

@@ -1,25 +1,12 @@
 {
-  "author": "semu <c@semu.mp> (http://github.com/semu)",
   "name": "node-blog",
-  "description": "Markdown Blog with twitter bootstrap UI and ace editor for composing…",
+  "description": "Blog with twitter bootstrap UI and ace editor for composing…",
   "version": "0.0.5",
-  "homepage": "https://github.com/semu/node-blog",
-  "contributors": [ 
-    { "name": "Sebastian Müller", "email": "c@semu.mp" }],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/semu/node-blog.git"
-  },
+  "homepage": "https://github.com/lichtso/node-blog",
   "engines": {
     "node": ">= 0.4.10"
   },
   "dependencies": {
-	"kickstart": ">= 0.0.5",
-	"node-markdownblog": "git://github.com/Lichtso/node-markdownblog.git",
-    "express-persona"  : ">=0.0.5",
-	"connect-winston"  : ">=0.0.1",
-	"winston"			: ">=0.6.2",
-	"winston-express"	: ">=0.0.2"
-},
-  "devDependencies": {}
+	 "kickstart": ">= 0.0.6"
+  }
 }

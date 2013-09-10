@@ -48,7 +48,7 @@
                   - for(var name in article.sources)
                     li
                       a(href=article.sources[name],title=name) #{name}
-    .row#articlemarkdown(style="display: none;")=article.content
+    .row#articlecontent(style="display: none;")=article.content
     #removePrompt.modal.hide.fade
       .modal-header
         a.close(href="#") &times;
