@@ -13,7 +13,7 @@
   - for (var i = 0; i < list.length; i++) 
     .row
       .span2.datefield
-        code=list[i].datestring
+        code=list[i].date.toISOString().split('T')[0]
       .span14.cLeft
         h3.headline
           a(href=list[i].url,title=list[i].name) #{list[i].name} 

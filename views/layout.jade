@@ -27,10 +27,10 @@ html(lang="de",xmlns="http://www.w3.org/1999/xhtml")
     script(type="text/javascript", src="/ace/src/mode-markdown.js")    
     - if (session.valid)
       script
-        var auth = true, redirectTo = null, maxID = #{session.maxID};
+        var auth = true, redirectTo = null, nextID = #{session.nextID};
     - else
       script
-        var auth = false, redirectTo = null, maxID = null;
+        var auth = false, redirectTo = null, nextID = null;
   body(onload="prettyPrint()")
     .container
       section#navigation
@@ -89,7 +89,7 @@ html(lang="de",xmlns="http://www.w3.org/1999/xhtml")
             .clearfix
               label(for="npid") New ID
               .input
-                input#npid.xlarge(type="text","readonly"="readonly",value=session.maxID)
+                input#npid.xlarge(type="text","readonly"="readonly",value=session.nextID)
             .clearfix
               label(for="ntitle") Headline
               .input

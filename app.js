@@ -64,22 +64,21 @@ srv.all('*', function(req, res, next) {
  * Callback for creating new articles
  **/
 srv.all('/api/new', function(req, res) {
-  var newName = null;
-  if (req.session && req.body.name && (newName = mdb.createNewArticle(req.body.name)) != null) {
-    return res.end(newName); } 
-  else {
-    return res.end('0'); }
+  var newName = '';
+  if(req.session && req.body.name && (newName += mdb.createNewArticle(req.body)) != null)
+    return res.end(newName);
+  else
+    return res.end('0');
 });
 
 /**
  * Callback for creating new articles
  **/
 srv.all('/api/drafts', function(req, res) {
-  var newName = null;
-  if (req.session) {
-    return res.end(JSON.stringify(mdb.getDrafts())); } 
-  else {
-    return res.end('0'); }
+  if(req.session)
+    return res.end(JSON.stringify(mdb.getDrafts()));
+  else
+    return res.end('0');
 });
 
 /**
@@ -124,7 +123,7 @@ srv.all('/posts', function(req, res) {
  * Deploy blog post resources
  * @example http://semu.mp/resource/3158/example.png
  **/
-srv.get(/\/resources\/([0-9]+)[A-Za-z0-9\-]*\/([A-Za-z0-9\-\.]+)/, function(req, res) {
+srv.get(/\/resources\/([0-9]+)\/([A-Za-z0-9\-\.]+)/, function(req, res) {
   var item = mdb.getArticle([req.params[0]], req.session.valid);
   var fileStat = fs.statSync(item.directory+req.params[1]);
   if(!item || req.params[1] == 'article.html' || !fileStat.isFile())
@@ -149,9 +148,9 @@ srv.get(/\/resources\/([0-9]+)[A-Za-z0-9\-]*\/([A-Za-z0-9\-\.]+)/, function(req,
 
 /**
  * Display single blog post
- * @example http://semu.mp/posts/3158-new-layout-and-stuff
+ * @example http://semu.mp/posts/3158
  **/
-srv.all(/\/posts\/([0-9]+)[A-Za-z0-9\-]*/, function(req, res) {
+srv.all(/\/posts\/([0-9]+)/, function(req, res) {
   var hasSession = req.session.valid;
 
   if(hasSession) {
@@ -183,7 +182,7 @@ srv.all(/\/posts\/([0-9]+)[A-Za-z0-9\-]*/, function(req, res) {
  * @example http://semu.mp/tag/node
  **/
 srv.all(/\/tag\/([A-Za-z0-9\-]+)/, function(req, res) {
-	var articles = mdb.getArticlesByTag(req.params[0].toLowerCase().replace(/[^a-z0-9-]/g, '-')) || [];
+	var articles = mdb.getArticlesByTag(req.params[0]) || [];
   mdb.setMeta('url', mdb.getDefault('url') + req.url);
   mdb.setMeta('title', 'Tag: ' + req.params[0]);
   mdb.setMeta('headline', 'Tagged with ' + req.params[0]);  

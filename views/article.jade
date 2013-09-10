@@ -37,17 +37,17 @@
             td.key Tags:
             td.info
               ul.tags
-                - for (var i = 0; i < article.tags.length; i++)
+                - for(var i = 0; i < article.tags.length; i ++)
                   li
-                    a(href="/tag/" + article.tags[i].url, title='All articles by tag "' + article.tags[i].name + '"') #{article.tags[i].name}
-          - if (article.sources.length > 0)
+                    a(href="/tag/" + article.tags[i], title='All articles by tag "' + article.tags[i] + '"') #{article.tags[i]}
+          - if(article.sources)
             tr
               td.key Links:
               td.info
                 ul.tags
-                  - for (var i = 0; i < article.sources.length; i++)
+                  - for(var name in article.sources)
                     li
-                      a(href=article.sources[i].url,title=article.sources[i].name) #{article.sources[i].name}
+                      a(href=article.sources[name],title=name) #{name}
     .row#articlemarkdown(style="display: none;")=article.content
     #removePrompt.modal.hide.fade
       .modal-header
