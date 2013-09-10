@@ -18,7 +18,7 @@
         h3.headline
           a(href=list[i].url,title=list[i].name) #{list[i].name} 
           small
-            abbr.timeago(title=list[i].date.toISOString()) #{list[i].date.toISOString()}
+            abbr.timeago(title=list[i].date.toISOString()) list[i].date.toISOString()
             small , #{list[i].words} words
     .row
       .offset2.span14.cLeft
