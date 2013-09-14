@@ -127,22 +127,8 @@ srv.get(/\/resources\/([0-9]+)\/([A-Za-z0-9\-\.]+)/, function(req, res) {
   var fileStat = fs.statSync(item.directory+req.params[1]);
   if(!item || req.params[1] == 'article.html' || !fileStat.isFile())
     throw new NotFound;
-
-  var contentTypes = {
-    "mp4": "video/mp4",
-    "mov": "video/mp4",
-    "m4v": "video/mp4"
-  }, contentType = contentTypes[req.params[1].substr(req.params[1].indexOf('.')+1)];
-
-  if(contentType) {
-    res.statusCode = 206;
-    res.setHeader('Content-Type', contentType);
-    res.setHeader('Content-Range', 'bytes 0-'+(fileStat.size-1)+'/'+fileStat.size);
-    res.setHeader('Content-Length', fileStat.size);
-    res.setHeader('Accept-Ranges', 'bytes');
-  }
   
-	res.sendfile(item.directory+req.params[1]);
+	res.sendfile(item.directory+req.params[1], {'root': '/'});
 });
 
 /**
