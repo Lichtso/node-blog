@@ -9,7 +9,7 @@ var config = JSON.parse(fs.readFileSync(__dirname + '/config.json','utf8'));
  * Set default category and set default URL
  **/
 core.setDefault('category', 'General');
-core.setDefault('url', 'http://' + config.host + (config.port == '80' ? '' : ':' + config.port));
+core.setDefault('url', 'http://' + config.host);
 
 /**
  * Set basic variables passed to jade template
@@ -40,7 +40,7 @@ var srv = kickstart.srv();
  * Set error handling
  **/
 srv.error(function(err, req, res, next){
-  if (err instanceof NotFound) {
+  if(err instanceof NotFound) {
     core.setMeta('url', core.getDefault('url') + req.url);
     core.setMeta('title', '404 Not Found');
       
@@ -122,13 +122,14 @@ srv.all('/posts', function(req, res) {
  * Deploy blog post resources
  * @example http://semu.mp/resource/3158/example.png
  **/
-srv.get(/\/resources\/([0-9]+)\/([A-Za-z0-9\-\.]+)/, function(req, res) {
+srv.get(/\/resources\/([0-9]+)\/(.+)/, function(req, res) {
   var item = core.getArticle([req.params[0]], req.session.valid);
   var fileStat = fs.statSync(item.directory+req.params[1]);
   if(!item || req.params[1] == 'article.html' || !fileStat.isFile())
     throw new NotFound;
   
-	res.sendfile(item.directory+req.params[1], {'root': '/'});
+  res.sendfile(req.params[1], {'root': item.directory});
+  console.log("GET Resource: "+item.directory+req.params[1]);
 });
 
 /**
@@ -167,12 +168,12 @@ srv.all(/\/posts\/([0-9]+)/, function(req, res) {
  * @example http://semu.mp/tag/node
  **/
 srv.all(/\/tag\/([A-Za-z0-9\-]+)/, function(req, res) {
-	var articles = core.getArticlesByTag(req.params[0]) || [];
+  var articles = core.getArticlesByTag(req.params[0]) || [];
   core.setMeta('url', core.getDefault('url') + req.url);
   core.setMeta('title', 'Tag: ' + req.params[0]);
   core.setMeta('headline', 'Tagged with ' + req.params[0]);  
   core.setMeta('current', 'posts');
-	
+  
   res.render('posts', core.jadeData({tags: core.getTagCloud(30, 14), list: articles}, req));
 });
 

@@ -26,10 +26,10 @@ html(lang="de",xmlns="http://www.w3.org/1999/xhtml")
     script(type="text/javascript", src="/ace/src/theme-clouds.js")
     script(type="text/javascript", src="/ace/src/mode-html.js")    
     - if (session.valid)
-      script
+      script.
         var auth = true, redirectTo = null, nextID = #{session.nextID};
     - else
-      script
+      script.
         var auth = false, redirectTo = null, nextID = null;
   body(onload="prettyPrint()")
     .container
